@@ -45,12 +45,44 @@ def add_user():
     db.session.add(new_user)
     db.session.commit()
     return  user_schema.jsonify(new_user)
+
 #Show users
 @app.route('/user',methods=['GET'])
 def all_userUsers():
     all_users=User.query.all()
     result=users_schema.dump(all_users)
     return jsonify(result)
+
+#Select Single User ID
+@app.route('/user/<id>',methods=['GET'])
+def selectUser(id):
+    user=User.query.get(id)
+    return user_schema.jsonify(user)
+
+#Update User ID
+@app.route('/user/<id>',methods=['PUT'])
+def updateUser(id):
+    name=request.json['name']
+    contact=request.json['contact']
+    
+    user=User.query.get(id)
+    
+    user.name=name
+    user.contact=contact
+    db.session.commit()
+    
+    return user_schema.jsonify(user)
+
+#Delete User ID
+@app.route('/user/<id>',methods=['DELETE'])
+def deleteUser(id):
+   
+    user=User.query.get(id)
+    db.session.delete(user)
+    db.session.commit()
+    
+    return user_schema.jsonify(user)
+
 if __name__ == '__main__':
     app.run(debug=True,port=5000)
     db.create_all()
